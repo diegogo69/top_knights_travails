@@ -24,7 +24,7 @@ class Graph {
 
   bfs(src, dest) {
     const queue = new Queue();
-    const visited = new Array(8).fill(new Array(8).fill(false));
+    const visited = [...Array(8)].map(el => [...Array(8)]);
     let steps = 0;
 
     // Destiny node 2d-index
@@ -33,18 +33,22 @@ class Graph {
     // let srcRowcol = `${src.row}${src.col}`;
     const destRowcol = dest;
     const srcRowcol = src;
-    queue.add({ index: srcRowcol, parent: null });
+
+    const srcNode = { index: srcRowcol, parent: null };
+
+    queue.add(srcNode);
+    visited[+srcNode.index[0]][+srcNode.index[1]] = srcNode;
 
     // Node is a rowcol string
-    let nodeStr = queue.get();
 
     // While queue is not empty
-    while (nodeStr !== undefined) {
+    while (queue.length()) {
+      let nodeStr = queue.get();
 
-      if (visited[nodeStr.index[0]][nodeStr.index[1]]) {
-        nodeStr = queue.get();
-        continue;
-      }
+      // if (visited[nodeStr.index[0]][nodeStr.index[1]]) {
+      //   nodeStr = queue.get();
+      //   continue;
+      // }
 
       // Compare current node to destination
       if (nodeStr.index === destRowcol) {
@@ -54,12 +58,12 @@ class Graph {
         let tmp = visited[nodeStr.parent[0]][nodeStr.parent[1]];
 
         // reconstruct node path using parent prop
-        while(tmp.parent !== null) {
+        while (tmp.parent !== null) {
           strPath = `${tmp.index} -> ${strPath}`;
           tmp = visited[tmp.parent[0]][tmp.parent[1]];
         }
 
-        console.log('PATH???');
+        console.log("PATH???");
         strPath = `${srcRowcol} -> ${strPath}`;
         console.log(strPath);
         return steps;
@@ -67,18 +71,27 @@ class Graph {
 
       // Add children to queue
       const sqr = this.adjList[nodeStr.index[0]][nodeStr.index[1]];
-      sqr.forEach((edge) => {
-        const edgeRowcol = `${edge.value.row}${edge.value.col}`;
-        queue.add({ index: edgeRowcol, parent: nodeStr.index });
+
+      const childrenIndex = sqr.map((edge) => {
+        return `${edge.value.row}${edge.value.col}`;
+        // return { index: edgeRowcol, parent: nodeStr.index };
+      });
+      const childrenNodes = childrenIndex.map((el) => {
+        return { index: el, parent: nodeStr.index };
+      });
+
+      childrenNodes.forEach((el) => {
+        if (!(visited[el.index[0]][el.index[1]])) {
+          visited[el.index[0]][el.index[1]] = el;
+          queue.add(el);
+        }
       });
 
       steps += 1;
       // Visit node
-      visited[nodeStr.index[0]][nodeStr.index[1]] = { ...nodeStr };
-      nodeStr = queue.get();
     }
 
-    console.log('Not found :(');
+    console.log("Not found :(");
     return steps;
   }
 

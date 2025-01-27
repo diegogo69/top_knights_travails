@@ -213,6 +213,21 @@ class LinkedList {
 
     return;
   }
+
+  // Iterates over the linked lists calling the callback function
+  // With the current iteration element
+  // Return an array of the result of each iteration callback
+  map(fn) {
+    let tmp = this.headNode;
+    let arr = [];
+
+    while (tmp !== null) {
+      arr.push(fn(tmp));
+      tmp = tmp.nextNode;
+    }
+
+    return arr;
+  }
 }
 
 export default LinkedList;
