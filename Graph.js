@@ -1,5 +1,8 @@
-import sqrEdges from "./sqrEdges.js";
-import Queue from "./Queue.js";
+/* eslint-disable no-console */
+/* eslint-disable no-plusplus */
+/* eslint-disable import/extensions */
+import sqrEdges from './sqrEdges.js';
+import Queue from './Queue.js';
 
 const SIZE = 8;
 
@@ -24,7 +27,8 @@ class Graph {
 
   bfs(src, dest) {
     const queue = new Queue();
-    const visited = [...Array(8)].map(el => [...Array(8)]);
+    // Create 2 dimensional array with all elements initialize to undefined
+    const visited = [...new Array(8)].map(() => [...new Array(8)]);
     let steps = 0;
 
     // Destiny node 2d-index
@@ -43,7 +47,7 @@ class Graph {
 
     // While queue is not empty
     while (queue.length()) {
-      let nodeStr = queue.get();
+      const nodeStr = queue.get();
 
       // if (visited[nodeStr.index[0]][nodeStr.index[1]]) {
       //   nodeStr = queue.get();
@@ -63,7 +67,7 @@ class Graph {
           tmp = visited[tmp.parent[0]][tmp.parent[1]];
         }
 
-        console.log("PATH???");
+        console.log('PATH???');
         strPath = `${srcRowcol} -> ${strPath}`;
         console.log(strPath);
         return steps;
@@ -72,13 +76,9 @@ class Graph {
       // Add children to queue
       const sqr = this.adjList[nodeStr.index[0]][nodeStr.index[1]];
 
-      const childrenIndex = sqr.map((edge) => {
-        return `${edge.value.row}${edge.value.col}`;
-        // return { index: edgeRowcol, parent: nodeStr.index };
-      });
-      const childrenNodes = childrenIndex.map((el) => {
-        return { index: el, parent: nodeStr.index };
-      });
+      // return { index: edgeRowcol, parent: nodeStr.index };
+      const childrenIndex = sqr.map((edge) => `${edge.value.row}${edge.value.col}`);
+      const childrenNodes = childrenIndex.map((el) => ({ index: el, parent: nodeStr.index }));
 
       childrenNodes.forEach((el) => {
         if (!(visited[el.index[0]][el.index[1]])) {
@@ -91,16 +91,16 @@ class Graph {
       // Visit node
     }
 
-    console.log("Not found :(");
+    console.log('Not found :(');
     return steps;
   }
 
   knightMoves(srcIndex, destIndex) {
-    const srcRowcol = srcIndex.join().replaceAll(",", "");
-    const destRowcol = destIndex.join().replaceAll(",", "");
+    const srcRowcol = srcIndex.join().replaceAll(',', '');
+    const destRowcol = destIndex.join().replaceAll(',', '');
 
     const steps = this.bfs(srcRowcol, destRowcol);
-    console.log("Steps");
+    console.log('Steps');
     return steps;
   }
 }

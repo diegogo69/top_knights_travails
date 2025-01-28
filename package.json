@@ -1,0 +1,25 @@
+{
+  "name": "top_knights_travails",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegogo69/top_knights_travails.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diegogo69/top_knights_travails/issues"
+  },
+  "homepage": "https://github.com/diegogo69/top_knights_travails#readme",
+  "description": "",
+  "devDependencies": {
+    "eslint": "8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "2.25.2"
+  }
+}
