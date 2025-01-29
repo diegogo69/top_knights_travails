@@ -11,14 +11,6 @@ class Graph {
 
   // Initialize chessboard graph representation as an adjacency list
   static init() {
-    // Test initialization using built-in iterative methods instead of a for loop
-    // const adjList = [...new Array(BOARD_SIZE)].map(() => [...new Array(BOARD_SIZE)]);
-    // adjList.forEach((rowEl, row) => {
-    //   adjList[row].forEach((colEl, col) => {
-    //     adjList[row][col] = sqrEdges({ row, col });
-    //   });
-    // });
-
     // Declare adjacency list wich will represent a chessboard
     // It is a two dimensional array of size BOARD_SIZE x BOARD_SIZE
     // Each of its elements wich represent a chessboard square
