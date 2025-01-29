@@ -1,35 +1,37 @@
 /* eslint-disable no-console */
 /* eslint-disable no-plusplus */
 /* eslint-disable import/extensions */
-// eslint-disable-next-line quotes
-import sqrEdges from "./sqrEdges.js";
+import sqrEdges from './sqrEdges.js';
 import Queue from './Queue.js';
 
-const SIZE = 8;
+const BOARD_SIZE = 8;
 
 class Graph {
   adjList = Graph.init();
 
+  // Initialize chessboard graph representation as an adjacency list
   static init() {
-    // Create adjacency list base structure. An array of size SIZE
-    // Make each element in adjList and array of size SIZE
-    // Iterate over 2d empty matrix and populate with edges
-    // const adjList = [];
-    const adjList = [...new Array(SIZE)]
-      .map(() => [...new Array(SIZE)]);
-
-    adjList.forEach((rowEl, row) => {
-      adjList[row].forEach((colEl, col) => {
-        adjList[row][col] = sqrEdges({ row, col });
-      });
-    });
-
-    // for (let row = 0; row < SIZE; row++) {
-    //   adjList[row] = [];
-    //   for (let col = 0; col < SIZE; col++) {
+    // Test initialization using built-in iterative methods instead of a for loop
+    // const adjList = [...new Array(BOARD_SIZE)].map(() => [...new Array(BOARD_SIZE)]);
+    // adjList.forEach((rowEl, row) => {
+    //   adjList[row].forEach((colEl, col) => {
     //     adjList[row][col] = sqrEdges({ row, col });
-    //   }
-    // }
+    //   });
+    // });
+
+    // Declare adjacency list wich will represent a chessboard
+    // It is a two dimensional array of size BOARD_SIZE x BOARD_SIZE
+    // Each of its elements wich represent a chessboard square
+    // Is populated with a linked list of nodes
+    // Each containing the valid knight moves from that square
+    const adjList = [];
+
+    for (let row = 0; row < BOARD_SIZE; row++) {
+      adjList[row] = [];
+      for (let col = 0; col < BOARD_SIZE; col++) {
+        adjList[row][col] = sqrEdges({ row, col });
+      }
+    }
 
     return adjList;
   }
@@ -44,8 +46,7 @@ class Graph {
     // Create 2 dimensional array with all elements initialize to undefined
     // Array constructor creates empty elements by default
     // Wich are skipped by the iterative methods that will be applied
-    const visited = [...new Array(SIZE)]
-      .map(() => [...new Array(SIZE)]);
+    const visited = [...new Array(BOARD_SIZE)].map(() => [...new Array(BOARD_SIZE)]);
 
     let steps = 0;
 
@@ -89,7 +90,9 @@ class Graph {
       const sqr = this.adjList[nodeStr.index[0]][nodeStr.index[1]];
 
       // return { index: edgeRowcol, parent: nodeStr.index };
-      const childrenIndex = sqr.map((edge) => `${edge.value.row}${edge.value.col}`);
+      const childrenIndex = sqr.map(
+        (edge) => `${edge.value.row}${edge.value.col}`,
+      );
       const childrenNodes = childrenIndex.map((el) => ({
         index: el,
         parent: nodeStr.index,
@@ -117,8 +120,7 @@ class Graph {
     const destRowcol = destIndex.join().replaceAll(',', '');
 
     const pathString = this.bfs(srcRowcol, destRowcol);
-    const pathArr = pathString.split(', ')
-      .map((el) => el.split(''));
+    const pathArr = pathString.split(', ').map((el) => el.split(''));
 
     console.log('Path array:');
     console.log(JSON.stringify(pathArr));
