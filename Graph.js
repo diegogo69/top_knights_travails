@@ -3,6 +3,7 @@
 /* eslint-disable import/extensions */
 import sqrEdges from './sqrEdges.js';
 import Queue from './Queue.js';
+import LinkedList from './LinkedList.js';
 
 const BOARD_SIZE = 8;
 
@@ -42,51 +43,55 @@ class Graph {
     const queue = new Queue();
 
     // Initialize non-sparsed 2 dimensional array
-    const visited = [...new Array(BOARD_SIZE)]
-      .map(() => [...new Array(BOARD_SIZE)]);
+    const visited = [...Array(BOARD_SIZE)]
+      .map(() => [...Array(BOARD_SIZE)]);
 
     // Use objects that store the square index and the square from wich it was enqueued
     // This will be used to recreate the shortest path in reverse order, from dest to src
     // They are added to visited array, to set them as visited and retrieve its parent later
-    const srcSqr = { index: srcRowcol, parent: null };
+    const srcSqr = { rowcol: srcRowcol, parent: null };
     queue.add(srcSqr);
-    visited[srcSqr.index[0]][srcSqr.index[1]] = srcSqr;
+    visited[srcSqr.rowcol[0]][srcSqr.rowcol[1]] = srcSqr;
 
     // While queue is not empty
     while (queue.length()) {
       const validMove = queue.get();
 
       // Check if current square match destination
-      if (validMove.index === destRowcol) {
+      if (validMove.rowcol === destRowcol) {
         // Recreate the path backwards from dest to src
         // Use a string that will later be
-        const pathArr = [];
+        // const pathArr = [];
+        const pathList = new LinkedList();
         let tmpSqr = validMove;
 
         // reconstruct node path backwards from dest to src
         while (tmpSqr.parent !== null) {
-          pathArr.unshift([tmpSqr.index[0], tmpSqr.index[1]]);
+          // pathArr.unshift([tmpSqr.rowcol[0], tmpSqr.rowcol[1]]);
+          pathList.prepend([tmpSqr.rowcol[0], tmpSqr.rowcol[1]]);
           tmpSqr = visited[tmpSqr.parent[0]][tmpSqr.parent[1]];
         }
 
-        pathArr.unshift([srcRowcol[0], srcRowcol[1]]);
+        // pathArr.unshift([srcRowcol[0], srcRowcol[1]]);
+        pathList.prepend([srcRowcol[0], srcRowcol[1]]);
 
-        return pathArr;
+        // return pathArr;
+        return pathList.map((node) => node.value);
       }
 
       // Get valid moves from current square
-      const sqrValidMoves = this.adjList[validMove.index[0]][validMove.index[1]];
+      const sqrValidMoves = this.adjList[validMove.rowcol[0]][validMove.rowcol[1]];
 
       // Array of children valid move square objects from current valid sqr
-      // Each storing its index, and the square from wich it was added to queue
+      // Each storing its rowcol, and the square from wich it was added to queue
       const sqrChildren = sqrValidMoves
         .map((edge) => `${edge.value.row}${edge.value.col}`)
-        .map((sqr) => ({ index: sqr, parent: validMove.index }));
+        .map((sqr) => ({ rowcol: sqr, parent: validMove.rowcol }));
 
       // Add valid move to queue if it hasn't been added before (as a valid move of another square)
       sqrChildren.forEach((sqr) => {
-        if (!visited[sqr.index[0]][sqr.index[1]]) {
-          visited[sqr.index[0]][sqr.index[1]] = sqr;
+        if (!visited[sqr.rowcol[0]][sqr.rowcol[1]]) {
+          visited[sqr.rowcol[0]][sqr.rowcol[1]] = sqr;
           queue.add(sqr);
         }
       });

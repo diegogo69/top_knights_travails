@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-plusplus */
 /* eslint-disable import/extensions */
 import sqrEdges from './sqrEdges.js';
