@@ -36,66 +36,67 @@ class Graph {
     return adjList;
   }
 
+  // Breadth First Search traversal algorithm applied to find a shortest path
+  // It traveses the graph by continuely dequeuen nodes from a queue
+  // Queue starts with the given source, and for each dequeued node add its children into the queue
+  // Nodes are enqueued only if the hasn't been added to queue before
+  // visited two dimensional array is used to check if the nodes have already been enqueued
   bfs(src, dest) {
-    // Declared passed args as constants for semantic meaning
+    // src and dest are strings of format 'yx', each represent a row and column index respectively
+    // Assigned to constant variables for semantic meaning
     const srcRowcol = src;
     const destRowcol = dest;
 
     const queue = new Queue();
 
-    // Create 2 dimensional array with all elements initialize to undefined
-    // Array constructor creates empty elements by default
-    // Wich are skipped by the iterative methods that will be applied
-    const visited = [...new Array(BOARD_SIZE)].map(() => [...new Array(BOARD_SIZE)]);
+    // Initialize non-sparsed 2 dimensional array
+    const visited = [...new Array(BOARD_SIZE)]
+      .map(() => [...new Array(BOARD_SIZE)]);
+
+    // Use objects that store the square index and the square from wich it was enqueued
+    // This will be used to recreate the shortest path in reverse order, from dest to src
+    // They are added to visited array, to set them as visited and retrieve its parent later
+    const srcSqr = { index: srcRowcol, parent: null };
+    queue.add(srcSqr);
+    visited[srcSqr.index[0]][srcSqr.index[1]] = srcSqr;
 
     let steps = 0;
-
-    // Destiny node 2d-index
-    // String representing 2d-index yx / rowcol
-
-    const srcNode = { index: srcRowcol, parent: null };
-
-    queue.add(srcNode);
-    visited[srcNode.index[0]][srcNode.index[1]] = srcNode;
-
-    // Node is a rowcol string
-
     // While queue is not empty
     while (queue.length()) {
-      const nodeStr = queue.get();
+      const validSqr = queue.get();
 
-      // Compare current node to destination
-      if (nodeStr.index === destRowcol) {
+      // Check if current square match destination
+      if (validSqr.index === destRowcol) {
         console.log(`Found in ${steps} steps`);
 
-        let strPath = `${nodeStr.index}`;
-        let tmp = visited[nodeStr.parent[0]][nodeStr.parent[1]];
+        // Recreate the path backwards from dest to src
+        // Use a string that will later be
+        const pathArr = [];
+        let tmpSqr = validSqr;
 
         // reconstruct node path backwards from dest to src
-        while (tmp.parent !== null) {
-          strPath = `${tmp.index}, ${strPath}`;
-          tmp = visited[tmp.parent[0]][tmp.parent[1]];
+        while (tmpSqr.parent !== null) {
+          pathArr.unshift([tmpSqr.index[0], tmpSqr.index[1]]);
+          tmpSqr = visited[tmpSqr.parent[0]][tmpSqr.parent[1]];
         }
 
-        strPath = `${srcRowcol}, ${strPath}`;
-        console.log('PATH???');
-        console.log(strPath);
+        pathArr.unshift([srcRowcol[0], srcRowcol[1]]);
 
         console.log(`Steps: ${steps}`);
 
-        return strPath;
+        return { pathArr };
       }
 
       // Add children to queue
-      const sqr = this.adjList[nodeStr.index[0]][nodeStr.index[1]];
+      const sqr = this.adjList[validSqr.index[0]][validSqr.index[1]];
 
-      // return { index: edgeRowcol, parent: nodeStr.index };
+      // return { index: edgeRowcol, parent: validSqr.index };
       const childrenIndex = sqr.map(
         (edge) => `${edge.value.row}${edge.value.col}`,
       );
       const childrenNodes = childrenIndex.map((el) => ({
         index: el,
-        parent: nodeStr.index,
+        parent: validSqr.index,
       }));
 
       childrenNodes.forEach((el) => {
@@ -119,8 +120,11 @@ class Graph {
     const srcRowcol = srcIndex.join().replaceAll(',', '');
     const destRowcol = destIndex.join().replaceAll(',', '');
 
-    const pathString = this.bfs(srcRowcol, destRowcol);
-    const pathArr = pathString.split(', ').map((el) => el.split(''));
+    const { pathArr } = this.bfs(srcRowcol, destRowcol);
+
+    const pathStr = pathArr.map((yx) => yx.join('')).join(' -> ');
+    console.log('Path string:');
+    console.log(pathStr);
 
     console.log('Path array:');
     console.log(JSON.stringify(pathArr));
