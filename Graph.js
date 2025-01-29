@@ -63,16 +63,16 @@ class Graph {
     let steps = 0;
     // While queue is not empty
     while (queue.length()) {
-      const validSqr = queue.get();
+      const validMove = queue.get();
 
       // Check if current square match destination
-      if (validSqr.index === destRowcol) {
+      if (validMove.index === destRowcol) {
         console.log(`Found in ${steps} steps`);
 
         // Recreate the path backwards from dest to src
         // Use a string that will later be
         const pathArr = [];
-        let tmpSqr = validSqr;
+        let tmpSqr = validMove;
 
         // reconstruct node path backwards from dest to src
         while (tmpSqr.parent !== null) {
@@ -84,30 +84,27 @@ class Graph {
 
         console.log(`Steps: ${steps}`);
 
-        return { pathArr };
+        return pathArr;
       }
 
-      // Add children to queue
-      const sqr = this.adjList[validSqr.index[0]][validSqr.index[1]];
+      // Get valid moves from current square
+      const sqrValidMoves = this.adjList[validMove.index[0]][validMove.index[1]];
 
-      // return { index: edgeRowcol, parent: validSqr.index };
-      const childrenIndex = sqr.map(
-        (edge) => `${edge.value.row}${edge.value.col}`,
-      );
-      const childrenNodes = childrenIndex.map((el) => ({
-        index: el,
-        parent: validSqr.index,
-      }));
+      // Array of children valid move square objects from current valid sqr
+      // Each storing its index, and the square from wich it was added to queue
+      const sqrChildren = sqrValidMoves
+        .map((edge) => `${edge.value.row}${edge.value.col}`)
+        .map((sqr) => ({ index: sqr, parent: validMove.index }));
 
-      childrenNodes.forEach((el) => {
-        if (!visited[el.index[0]][el.index[1]]) {
-          visited[el.index[0]][el.index[1]] = el;
-          queue.add(el);
+      // Add valid move to queue if it hasn't been added before (as a valid move of another square)
+      sqrChildren.forEach((sqr) => {
+        if (!visited[sqr.index[0]][sqr.index[1]]) {
+          visited[sqr.index[0]][sqr.index[1]] = sqr;
+          queue.add(sqr);
         }
       });
 
       steps += 1;
-      // Visit node
     }
 
     console.log('Not found :(');
@@ -120,16 +117,11 @@ class Graph {
     const srcRowcol = srcIndex.join().replaceAll(',', '');
     const destRowcol = destIndex.join().replaceAll(',', '');
 
-    const { pathArr } = this.bfs(srcRowcol, destRowcol);
+    const pathArr = this.bfs(srcRowcol, destRowcol);
 
     const pathStr = pathArr.map((yx) => yx.join('')).join(' -> ');
-    console.log('Path string:');
-    console.log(pathStr);
 
-    console.log('Path array:');
-    console.log(JSON.stringify(pathArr));
-
-    return pathArr;
+    return { pathArr, pathStr };
   }
 }
 

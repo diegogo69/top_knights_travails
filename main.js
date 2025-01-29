@@ -9,9 +9,8 @@ console.log(g);
 // const s2 = g.knightMoves([3,3],[0,0]);
 // console.log(s2);
 
-const s3 = g.knightMoves([0,0],[7,7]);
+const { pathArr, pathStr } = g.knightMoves([0,0],[7,7]);
 console.log('Path array:');
-console.log(JSON.stringify(s3));
-
-// console.log('// [[0,0],[2,1],[4,2],[6,3],[7,5],[5,6],[7,7]]')
-// console.log('// [[0,0],[2,1],[4,2],[6,3],[4,4],[6,5],[7,7]]')
+console.log(JSON.stringify(pathArr));
+console.log('Path string:');
+console.log(pathStr);
