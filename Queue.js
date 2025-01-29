@@ -2,10 +2,10 @@ class Queue {
   arr = [];
 
   add(item) {
-   //  if (Array.isArray(item)) {
-   //    this.arr.push(...item);
-   //    return;
-   //  }
+    if (Array.isArray(item)) {
+      this.arr.push(...item);
+      return;
+    }
 
     this.arr.push(item);
   }
@@ -15,7 +15,7 @@ class Queue {
   }
 
   length() {
-   return this.arr.length;
+    return this.arr.length;
   }
 }
 

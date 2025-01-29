@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 /* eslint-disable no-plusplus */
 /* eslint-disable import/extensions */
-import sqrEdges from './sqrEdges.js';
-import Queue from './Queue.js';
+import getValidMoves from './getValidMoves.js';
 import LinkedList from './LinkedList.js';
+import Queue from './Queue.js';
 
 const BOARD_SIZE = 8;
 
@@ -22,7 +21,7 @@ class Graph {
     for (let row = 0; row < BOARD_SIZE; row++) {
       adjList[row] = [];
       for (let col = 0; col < BOARD_SIZE; col++) {
-        adjList[row][col] = sqrEdges({ row, col });
+        adjList[row][col] = getValidMoves({ row, col });
       }
     }
 
@@ -59,23 +58,19 @@ class Graph {
 
       // Check if current square match destination
       if (validMove.rowcol === destRowcol) {
-        // Recreate the path backwards from dest to src
-        // Use a string that will later be
-        // const pathArr = [];
+        // Linked list to recreate the shortest path into an array
+        // Iterate over visited squares in last to first order adding each to start of the list
+        // Resulting in an ordered list from src to dest
         const pathList = new LinkedList();
         let tmpSqr = validMove;
 
-        // reconstruct node path backwards from dest to src
         while (tmpSqr.parent !== null) {
-          // pathArr.unshift([tmpSqr.rowcol[0], tmpSqr.rowcol[1]]);
           pathList.prepend([tmpSqr.rowcol[0], tmpSqr.rowcol[1]]);
           tmpSqr = visited[tmpSqr.parent[0]][tmpSqr.parent[1]];
         }
 
-        // pathArr.unshift([srcRowcol[0], srcRowcol[1]]);
         pathList.prepend([srcRowcol[0], srcRowcol[1]]);
 
-        // return pathArr;
         return pathList.map((node) => node.value);
       }
 
@@ -89,11 +84,11 @@ class Graph {
         .map((sqr) => ({ rowcol: sqr, parent: validMove.rowcol }));
 
       // Add valid move to queue if it hasn't been added before (as a valid move of another square)
-      sqrChildren.forEach((sqr) => {
-        if (!visited[sqr.rowcol[0]][sqr.rowcol[1]]) {
-          visited[sqr.rowcol[0]][sqr.rowcol[1]] = sqr;
-          queue.add(sqr);
-        }
+      sqrChildren.forEach((sqrChild) => {
+        if (visited[sqrChild.rowcol[0]][sqrChild.rowcol[1]]) return;
+
+        visited[sqrChild.rowcol[0]][sqrChild.rowcol[1]] = sqrChild;
+        queue.add(sqrChild);
       });
     }
 

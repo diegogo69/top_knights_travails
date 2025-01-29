@@ -1,8 +1,9 @@
-import LinkedList from "./LinkedList.js";
+// eslint-disable-next-line import/extensions
+import LinkedList from './LinkedList.js';
 
 const SIZE = 8;
 
-const sqrEdges = function ({ row, col }) {
+const getValidMoves = function sqrEdges({ row, col }) {
   // Squares are represented as a [row][col] element within a 2d-arr
   // Each square represents a node in the graph
   // Each stores a reference to a linked list containing its edges
@@ -92,4 +93,4 @@ const sqrEdges = function ({ row, col }) {
   return edges;
 };
 
-export default sqrEdges;
+export default getValidMoves;
