@@ -9,13 +9,7 @@ const BOARD_SIZE = 8;
 class Graph {
   adjList = Graph.init();
 
-  // Initialize chessboard graph representation as an adjacency list
   static init() {
-    // Declare adjacency list wich will represent a chessboard
-    // It is a two dimensional array of size BOARD_SIZE x BOARD_SIZE
-    // Each of its elements wich represent a chessboard square
-    // Is populated with a linked list of nodes
-    // Each containing the valid knight moves from that square
     const adjList = [];
 
     for (let row = 0; row < BOARD_SIZE; row++) {
@@ -28,38 +22,23 @@ class Graph {
     return adjList;
   }
 
-  // Breadth First Search traversal algorithm applied to find a shortest path
-  // It traveses the graph by continuely dequeuen nodes from a queue
-  // Queue starts with the given source, and for each dequeued node add its children into the queue
-  // Nodes are enqueued only if the hasn't been added to queue before
-  // visited two dimensional array is used to check if the nodes have already been enqueued
   bfs(src, dest) {
-    // src and dest are strings of format 'yx', each represent a row and column index respectively
-    // Assigned to constant variables for semantic meaning
     const srcRowcol = src;
     const destRowcol = dest;
 
     const queue = new Queue();
 
-    // Initialize non-sparsed 2 dimensional array
     const visited = [...new Array(BOARD_SIZE)]
       .map(() => [...new Array(BOARD_SIZE)]);
 
-    // Use objects that store the square index and the square from wich it was enqueued
-    // This will be used to recreate the shortest path in reverse order, from dest to src
-    // They are added to visited array, to set them as visited and retrieve its parent later
     const srcSqr = { index: srcRowcol, parent: null };
     queue.add(srcSqr);
     visited[srcSqr.index[0]][srcSqr.index[1]] = srcSqr;
 
-    // While queue is not empty
     while (queue.length()) {
       const validMove = queue.get();
 
-      // Check if current square match destination
       if (validMove.index === destRowcol) {
-        // Recreate the path backwards from dest to src
-        // Use a string that will later be
         const pathArr = [];
         let tmpSqr = validMove;
 
@@ -74,16 +53,12 @@ class Graph {
         return pathArr;
       }
 
-      // Get valid moves from current square
       const sqrValidMoves = this.adjList[validMove.index[0]][validMove.index[1]];
 
-      // Array of children valid move square objects from current valid sqr
-      // Each storing its index, and the square from wich it was added to queue
       const sqrChildren = sqrValidMoves
         .map((edge) => `${edge.value.row}${edge.value.col}`)
         .map((sqr) => ({ index: sqr, parent: validMove.index }));
 
-      // Add valid move to queue if it hasn't been added before (as a valid move of another square)
       sqrChildren.forEach((sqr) => {
         if (!visited[sqr.index[0]][sqr.index[1]]) {
           visited[sqr.index[0]][sqr.index[1]] = sqr;
